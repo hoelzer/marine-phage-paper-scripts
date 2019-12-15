@@ -5,6 +5,20 @@ from random import choice
 import argparse
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 
+def fasta_iter(fasta_name):
+    fh = open(fasta_name)
+
+    faiter = (x[1] for x in groupby(fh, lambda line: line[0] == ">"))
+
+    for header in faiter:
+        # drop the ">"
+        headerStr = header.__next__()[1:].strip()
+
+        # join all sequence lines to one.
+        seq = "".join(s.strip() for s in faiter.__next__())
+
+        yield (headerStr, seq)
+    
 def parse_args():
     # Create argument parser
     parser = argparse.ArgumentParser()
